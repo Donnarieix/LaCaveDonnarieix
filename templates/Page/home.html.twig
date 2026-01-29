@@ -1,0 +1,79 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block body %}
+    <input id="file" type="file" />
+    <progress id="p" value="0" max="100"></progress>
+    <div id="status"></div>
+
+    <script>
+        const fileInput = document.getElementById('file');
+        const progress = document.getElementById('p');
+        const statusEl = document.getElementById('status');
+
+        const CHUNK_SIZE = 64 * 1024 * 1024; // 64MiB
+
+        fileInput.addEventListener('change', async () => {
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            statusEl.textContent = "Init upload...";
+
+            // 1) init
+            const initRes = await fetch('/api/uploads/init', {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    filename: file.name,
+                    size: file.size,
+                    chunkSize: CHUNK_SIZE
+                })
+            });
+            if (!initRes.ok) throw new Error(await initRes.text());
+            const init = await initRes.json();
+
+            const uploadId = init.uploadId;
+            const chunkSize = init.chunkSize;
+            const totalChunks = init.totalChunks;
+
+            // 2) send chunks
+            for (let index = 0; index < totalChunks; index++) {
+                const start = index * chunkSize;
+                const end = Math.min(file.size, start + chunkSize);
+                const blob = file.slice(start, end);
+
+                statusEl.textContent = `Upload chunk ${index + 1}/${totalChunks}...`;
+
+                // Retry simple (3 essais)
+                let ok = false;
+                for (let attempt = 1; attempt <= 3; attempt++) {
+                    const fd = new FormData();
+                    fd.append('index', index);
+                    fd.append('chunk', blob, `chunk-${index}`);
+
+                    const r = await fetch(`/api/uploads/${uploadId}/chunk`, { method: 'POST', credentials: 'same-origin', body: fd });
+                    if (r.ok) { ok = true; break; }
+                    await new Promise(res => setTimeout(res, 500 * attempt));
+                }
+                if (!ok) {
+                    statusEl.textContent = `Échec chunk ${index}.`;
+                    return;
+                }
+
+                progress.value = Math.floor(((index + 1) / totalChunks) * 100);
+            }
+
+            // 3) complete
+            statusEl.textContent = "Finalisation...";
+            const completeRes = await fetch(`/api/uploads/${uploadId}/complete`, { method: 'POST', credentials: 'same-origin' });
+            if (!completeRes.ok) throw new Error(await completeRes.text());
+            const done = await completeRes.json();
+
+            statusEl.textContent = `Terminé: ${done.filename} (${done.bytes} bytes)`;
+        });
+    </script>
+{% endblock %}
