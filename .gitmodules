@@ -1,0 +1,6 @@
+[submodule "api"]
+	path = api
+	url = git@github.com:LuDoSniper/LaCaveDonnarieixApi.git
+[submodule "clients"]
+	path = clients
+	url = git@github.com:LuDoSniper/LaCaveDonnarieixClient.git
