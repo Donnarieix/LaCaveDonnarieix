@@ -1,0 +1,632 @@
+body {
+    display: flex;
+    height: 100vh;
+}
+
+.hide {
+    display: none !important;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
+    width: 100%;
+    height: 100%;
+}
+
+h1 {
+    font-size: 20px;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    font-weight: 500;
+}
+
+main > div {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 64px;
+    width: 100%;
+    height: 100%;
+}
+
+#sub-sidebar {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    min-width: 250px;
+    height: 100%;
+    overflow-y: scroll;
+}
+input[type=radio] {
+    display: none;
+}
+#sub-sidebar label {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    padding: 16px;
+    width: 100%;
+    cursor: pointer;
+    border-color: var(--border-light);
+}
+#tab-profile:checked ~ #sub-sidebar #for-tab-profile {
+    background-color: var(--secondary);
+    border-right: 4px solid var(--border);
+}
+#tab-security:checked ~ #sub-sidebar #for-tab-security {
+    background-color: var(--secondary);
+    border-right: 4px solid var(--border);
+}
+#tab-admin:checked ~ #sub-sidebar #for-tab-admin {
+    background-color: var(--secondary);
+    border-right: 4px solid var(--border);
+}
+#tab-profile:not(:checked) ~ #sub-sidebar #for-tab-profile:hover {
+    background-color: rgba(244, 244, 244, 0.75);
+    border-right: 4px solid var(--border-light);
+}
+#tab-security:not(:checked) ~ #sub-sidebar #for-tab-security:hover {
+    background-color: rgba(244, 244, 244, 0.75);
+    border-right: 4px solid var(--border-light);
+}
+#tab-admin:not(:checked) ~ #sub-sidebar #for-tab-admin:hover {
+    background-color: rgba(244, 244, 244, 0.75);
+    border-right: 4px solid var(--border-light);
+}
+section {
+    /*display: none !important;*/
+    opacity: 0 !important;
+    position: relative;
+    z-index: 0 !important;
+}
+#tab-profile:checked ~ #main #profile-profile {
+    /*display: flex !important;*/
+    opacity: 1 !important;
+    transition: opacity 0s;
+    z-index: 1 !important;
+}
+#tab-security:checked ~ #main #profile-security {
+    /*display: flex !important;*/
+    opacity: 1 !important;
+    transition: opacity 0s;
+    z-index: 1 !important;
+}
+#tab-admin:checked ~ #main #admin-request {
+    /*display: flex !important;*/
+    opacity: 1 !important;
+    transition: opacity 0s;
+    z-index: 1 !important;
+}
+
+#profile-profile {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    padding-right: 48px;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#avatar-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    opacity: 0;
+    transform: translateY(+50%);
+    transition: all 0s;
+}
+#tab-profile:checked ~ #main #profile-profile #avatar-container {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 0.5s;
+}
+#avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: var(--border);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
+@keyframes wave {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+@keyframes waveRotate {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+#avatar-color {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background:
+        radial-gradient(circle at 20% 30%, var(--c1) 0%, transparent 70%),
+        radial-gradient(circle at 80% 40%, var(--c2) 0%, transparent 70%),
+        radial-gradient(circle at 50% 80%, var(--c3) 0%, transparent 70%);
+    filter: blur(0px);
+    background-size: 200% 200%;
+    animation:
+        wave 12s ease-in-out infinite,
+        waveRotate 30s linear infinite;
+}
+#avatar span {
+    font-family: "SN Pro", "sans-serif";
+    color: white;
+    font-size: 40px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    user-select: none;
+}
+#avatar-container input {
+    display: none;
+}
+#avatar-container label {
+    padding: 8px 16px;
+    border-radius: 4px;
+    background-color: var(--primary);
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+}
+#avatar-container button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background-color: var(--secondary);
+    color: black;
+    cursor: pointer;
+    outline: none;
+    font-size: 16px;
+}
+
+#main {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    overflow-y: scroll;
+    position: relative;
+}
+
+#form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+#name-information {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+}
+#name-information div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 8px;
+    opacity: 0;
+    transition: all 0s;
+    transform: translateX(-50%);
+}
+#tab-profile:checked ~ #main #profile-profile #name-information div {
+    opacity: 1;
+    transition: all 0.5s;
+    transform: translateX(0);
+}
+#tab-profile:checked ~ #main #profile-profile #name-information div:nth-child(1) {
+    transition: all 0.75s;
+}
+#form label {
+    font-size: 16px;
+}
+#form input {
+    font-size: 16px;
+    color: black;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 8px 16px;
+    width: 100%;
+}
+#form input::placeholder {
+    color: var(--border);
+}
+#form > div:nth-child(2),
+#form > div:nth-child(3) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+    opacity: 0;
+    transform: translateX(-50%);
+    transition: all 0s;
+}
+#tab-profile:checked ~ #main #profile-profile #form > div:nth-child(2) {
+    opacity: 1;
+    transition: all 1s;
+    transform: translateX(0);
+}
+#tab-profile:checked ~ #main #profile-profile #form > div:nth-child(3) {
+    opacity: 1;
+    transition: all 1.25s;
+    transform: translateX(0);
+}
+#form > div:nth-child(4) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-top: 8px;
+    width: 100%;
+    opacity: 0;
+    transition: all 0s;
+    transform: translateY(-50%);
+}
+#form > div:nth-child(4) > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+}
+#form select {
+    display: none;
+}
+#form #select {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 8px 8px 16px;
+    background-color: transparent;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    color: black;
+    font-size: 16px;
+    position: relative;
+    gap: 10px;
+    min-width: 250px;
+}
+#form #select span {
+    width: 100%;
+    color: black;
+    font-size: 16px;
+}
+#form #select img {
+    width: 24px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+#form #select img:hover {
+    background-color: var(--border-light);
+}
+#form #select-choices {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px;
+    background-color: white;
+    box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+    position: absolute;
+    top: calc(100% + 1px);
+    right: 0;
+}
+#form #select-choices .choice {
+    width: 100%;
+    font-size: 16px;
+    padding: 8px;
+    text-wrap: nowrap;
+    cursor: pointer;
+}
+#form #select-choices .choice.selected {
+    background-color: var(--secondary);
+}
+#form #select-choices .choice:hover {
+    background-color: var(--border-light);
+}
+#tab-profile:checked ~ #main #profile-profile #form > div:nth-child(4) {
+    opacity: 1;
+    transition: all 1.5s;
+    transform: translateY(0);
+}
+#form > div:nth-child(4) button {
+    padding: 8px 16px;
+    color: white;
+    border-radius: 4px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    background-color: var(--primary);
+    font-size: 16px;
+}
+#form select:hover {
+    background-color: var(--secondary);
+}
+
+#profile-security {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 16px;
+    min-width: 500px;
+    height: 100%;
+    padding-right: 48px;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+#inputs {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 8px;
+    width: 100%;
+}
+#inputs div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 4px;
+    width: 100%;
+    opacity: 0;
+    transition: all 0s;
+    transform: translateX(-50%);
+}
+#tab-security:checked ~ #main #profile-security #inputs div:nth-child(1) {
+    opacity: 1;
+    transition: all 0.5s;
+    transform: translateX(0);
+}
+#tab-security:checked ~ #main #profile-security #inputs div:nth-child(2) {
+    opacity: 1;
+    transition: all 0.75s;
+    transform: translateX(0);
+}
+#inputs label {
+    color: black;
+    font-size: 16px;
+}
+#inputs input {
+    font-size: 16px;
+    color: black;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 8px 16px;
+    width: 100%;
+}
+#inputs input::placeholder {
+    color: var(--border);
+}
+
+#security-level {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 4px;
+    width: 100%;
+}
+#security-progressbar {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 4px;
+    width: 100%;
+}
+#security-progressbar .lvl {
+    height: 4px;
+    width: 100%;
+    opacity: 0;
+    transition: opacity 0s;
+}
+#tab-security:checked ~ #main #profile-security #security-progressbar .lvl {
+    opacity: 1;
+    transition: opacity 1s;
+}
+.lvl .progressbar-background {
+    width: 0;
+    height: 100%;
+    border-radius: 2px;
+    overflow: hidden;
+    background-color: var(--border-light);
+}
+.lvl .progressbar-value {
+    width: 0;
+    height: 100%;
+}
+.lvl .progressbar-value.weak {
+    background-color: #F75A39;
+}
+.lvl .progressbar-value.middle {
+    background-color: #F7BE39;
+}
+.lvl .progressbar-value.strong {
+    background-color: #84F884;
+}
+#tab-security:checked ~ #main #profile-security #security-progressbar #lvl-0 .progressbar-background {
+    width: 100%;
+    transition: width 0.2s ease-in 0s;
+}
+#tab-security:checked ~ #main #profile-security #security-progressbar #lvl-1 .progressbar-background {
+    width: 100%;
+    transition: width 0.2s ease 0.1s;
+}
+#tab-security:checked ~ #main #profile-security #security-progressbar #lvl-2 .progressbar-background {
+    width: 100%;
+    transition: width 0.2s ease 0.2s;
+}
+#tab-security:checked ~ #main #profile-security #security-progressbar #lvl-3 .progressbar-background {
+    width: 100%;
+    transition: width 0.2s ease 0.3s;
+}
+#tab-security:checked ~ #main #profile-security #security-progressbar #lvl-4 .progressbar-background {
+    width: 100%;
+    transition: width 0.2s ease-out 0.4s;
+}
+#security-info {
+    color: #1BA61B;
+    font-size: 16px;
+    opacity: 0;
+    transform: translateX(-50%);
+    transition: all 0s;
+}
+#security-info.weak {
+    color: #A61B1B;
+}
+#security-info.middle {
+    color: #A6A11B;
+}
+#security-info.strong {
+    color: #1BA61B;
+}
+#tab-security:checked ~ #main #profile-security #security-info {
+    opacity: 1;
+    transform: translateX(0);
+    transition: all 1s;
+}
+#security-tips,
+#security-tips + ul {
+    color: var(--border-light);
+    font-size: 14px;
+    opacity: 0;
+    transform: translateX(-50%);
+    transition: all 0s;
+}
+#security-tips + ul {
+    margin-top: 0;
+}
+#tab-security:checked ~ #main #profile-security #security-tips,
+#tab-security:checked ~ #main #profile-security #security-tips + ul {
+    opacity: 1;
+    transform: translateX(0);
+    transition: all 1.25s;
+}
+#profile-security #password-message {
+    font-size: 14px;
+    color: #A61B1B;
+    opacity: 0;
+    transform: translateY(-100%);
+    transition: all 0s;
+}
+#tab-security:checked ~ #main #profile-security #password-message {
+    opacity: 1;
+    transform: translateY(0);
+    transition: all 1s;
+}
+#profile-security button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 16px;
+    background-color: var(--primary);
+    border: none;
+    border-radius: 4px;
+    outline: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: white;
+    opacity: 0;
+    transform: translateY(-100%);
+    transition: all 0s;
+}
+#tab-security:checked ~ #main #profile-security button {
+    opacity: 1;
+    transform: translateX(0);
+    transition: all 1s;
+}
+
+input {
+    outline: none;
+}
+
+#admin-request {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    padding-right: 48px;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+#table-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    opacity: 0;
+    transition: all 0s;
+}
+#tab-admin:checked ~ #main #admin-request table {
+    opacity: 1;
+    transition: all 1s;
+}
+table thead {
+    background-color: var(--border-light);
+    border-bottom: 1px solid var(--border);
+}
+table td {
+    padding: 8px;
+    border-right: 1px solid var(--border);
+}
+table td:last-child {
+    border-right: none;
+}
+table .actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+table .actions div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+table .actions div.check {
+    border: 2px solid #4CC03A;
+    border-radius: 4px;
+    background-color: rgba(79, 241, 54, 0.5);
+}
+table .actions div.cancel {
+    border: 2px solid #DD4D4D;
+    border-radius: 4px;
+    background-color: rgba(244, 90, 90, 0.5);
+}

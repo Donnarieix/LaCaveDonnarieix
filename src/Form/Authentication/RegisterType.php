@@ -18,17 +18,32 @@ class RegisterType extends AbstractType
         $builder
             ->add('email', EmailType::class, [
                 'label' => 'Email',
+                'attr' => [
+                    'placeholder' => 'Email',
+                ]
             ])
             ->add('username', TextType::class, [
                 'label' => 'Username',
+                'attr' => [
+                    'placeholder' => 'Username',
+                ],
+                'required' => true,
             ])
             ->add('password', RepeatedType::class, [
                 'type' => PasswordType::class,
                 'first_options' => [
                     'label' => 'Password',
+                    'attr' => [
+                        'placeholder' => 'Password',
+                    ],
+                    'required' => true,
                 ],
                 'second_options' => [
                     'label' => 'Repeat Password',
+                    'attr' => [
+                        'placeholder' => 'Repeat password',
+                    ],
+                    'required' => true,
                 ]
             ])
         ;

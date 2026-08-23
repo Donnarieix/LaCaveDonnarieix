@@ -4,9 +4,31 @@
     Login
 {% endblock %}
 
+{% block stylesheets %}
+    <link rel="stylesheet" href="{{ asset('static/css/authentication.css') }}">
+{% endblock %}
+
 {% block body %}
-    {{ form_start(form) }}
-    {{ form_rest(form) }}
-    <button>Login</button>
-    {{ form_end(form) }}
+    <div id="authentication-container">
+        <div id="app-title-container">
+            <img src="{{ asset('static/svg/logo.svg') }}" alt="Logo">
+            <span id="app-title">La Cave Donnarieix</span>
+        </div>
+
+        {{ form_start(form) }}
+            <div id="credentials-container">
+                {{ form_widget(form._username) }}
+                {{ form_widget(form._password) }}
+                <div id="remember-me">
+                    {{ form_widget(form._remember_me) }}
+                    {{ form_label(form._remember_me) }}
+                </div>
+            </div>
+
+            <div id="submits-container">
+                <button>Sign In</button>
+                <span>Don't have an account yet ? <a href="{{ path('app_register') }}">Sign Up</a></span>
+            </div>
+        {{ form_end(form) }}
+    </div>
 {% endblock %}

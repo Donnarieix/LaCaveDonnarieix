@@ -2,20 +2,27 @@
 
 namespace App\Controller\Upload;
 
+use App\Entity\Authentication\User;
+use App\Entity\File;
+use App\Entity\Folder;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\{JsonResponse, Request};
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\AsciiSlugger;
+use Symfony\Component\Uid\Uuid;
 
 final class UploadController extends AbstractController
 {
     private string $tmpDir;
     private string $storageDir;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(string $tmpDir, string $storageDir)
+    public function __construct(string $tmpDir, string $storageDir, EntityManagerInterface $entityManager)
     {
         $this->tmpDir = $tmpDir;
         $this->storageDir = $storageDir;
+        $this->entityManager = $entityManager;
     }
 
     #[Route('/api/uploads/init', name: 'upload_init', methods: ['POST'])]
@@ -101,8 +108,13 @@ final class UploadController extends AbstractController
     }
 
     #[Route('/api/uploads/{uploadId}/complete', name: 'upload_complete', methods: ['POST'])]
-    public function complete(string $uploadId): JsonResponse
+    public function complete(
+        string $uploadId,
+        Request $request,
+    ): JsonResponse
     {
+        $request_data = json_decode($request->getContent(), true);
+
         $dir = $this->tmpDir . '/' . $uploadId;
         $manifestPath = $dir . '/manifest.json';
 
@@ -176,11 +188,91 @@ final class UploadController extends AbstractController
         @unlink($manifestPath);
         @rmdir($dir);
 
+        $folder = null;
+        if ($request_data['root'] !== null && $request_data['root'] !== '') {
+            $folder = $this->entityManager->getRepository(Folder::class)->findOneBy(['uuid' => $request_data['root']]);
+            if (!$folder || $this->getUser() !== $folder->getOwner()) {
+                throw $this->createNotFoundException();
+            }
+        }
+
+        $finfo = new \finfo(FILEINFO_MIME_TYPE);
+        $mime = $finfo->file($finalPath) ?: 'application/octet-stream';
+        $this->createFile(
+            name: $request_data['filename'],
+            path: $finalPath,
+            size: $manifest['size'],
+            owner: $this->getUser(),
+            parent: $folder,
+            type: $this->fileCategoryFromMime($mime),
+        );
+
         return $this->json([
             'ok' => true,
             'path' => $finalPath,
             'filename' => $finalName,
             'bytes' => $written,
         ]);
+    }
+
+    public function createFile(
+        string $name,
+        string $path,
+        int $size,
+        User $owner,
+        ?Folder $parent,
+        string $type
+    ): void
+    {
+        $file = (new File())
+            ->setName($name)
+            ->setPath($path)
+            ->setSize($size)
+            ->setOwner($owner)
+            ->setParent($parent)
+            ->setType($type)
+            ->setUuid(Uuid::v4())
+        ;
+        $this->entityManager->persist($file);
+        $this->entityManager->flush();
+    }
+
+    function fileCategoryFromMime(string $mime): string
+    {
+        // familles simples
+        if (str_starts_with($mime, 'image/')) return 'image';
+        if (str_starts_with($mime, 'video/')) return 'video';
+        if (str_starts_with($mime, 'audio/')) return 'audio';
+        if (str_starts_with($mime, 'font/'))  return 'font';
+
+        // spécifiques
+        return match ($mime) {
+            'application/pdf' => 'pdf',
+
+            'application/zip',
+            'application/x-7z-compressed',
+            'application/x-rar',
+            'application/gzip',
+            'application/x-tar' => 'archive',
+
+            // Office
+            'application/msword',
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'doc',
+            'application/vnd.ms-excel',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'sheet',
+            'application/vnd.ms-powerpoint',
+            'application/vnd.openxmlformats-officedocument.presentationml.presentation' => 'slides',
+
+            // texte / data
+            'text/plain',
+            'text/markdown',
+            'text/csv',
+            'text/html',
+            'application/json',
+            'application/xml',
+            'text/xml' => 'text',
+
+            default => 'unknown',
+        };
     }
 }
